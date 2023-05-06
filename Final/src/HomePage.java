@@ -10,8 +10,8 @@ public class HomePage extends JFrame{
 	private static final int FRAME_HEIGHT = 600;
 	private static final int TEXTCOMP_WIDTH = 500;
 	
-	private JButton addPostButton;
-	private JPanel titleAndConP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
+	private JButton updateButton, addPostButton;
+	private JPanel buttonsP, titleAndConP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
 	private JLabel noteLabel, conLabel, pictureLabel;
 	private JTextField titleF, leftTimeF, locationF, tagF;
 	private JTextArea itemArea, noteArea;
@@ -29,7 +29,15 @@ public class HomePage extends JFrame{
 	}
 	
 	public void creatButton() {
+		updateButton = new JButton("更新頁面");
 		addPostButton = new JButton("新增貼文");
+		
+		updateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				//重新從資料庫讀取資料
+			}
+		});
+		
 		addPostButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//跳到編輯視窗
@@ -74,6 +82,10 @@ public class HomePage extends JFrame{
 	}
 	
 	public void creatPanel() {
+		buttonsP = new JPanel();
+		buttonsP.add(updateButton);
+		buttonsP.add(addPostButton);
+		
 		titleAndConP = new JPanel();
 		titleAndConP.add(titleF);
 		titleAndConP.add(conLabel);
@@ -99,7 +111,7 @@ public class HomePage extends JFrame{
 		panels.add(wholePostP);
 		
 		overallP = new JPanel(new GridLayout(panels.size()+1, 1));
-		overallP.add(addPostButton);
+		overallP.add(buttonsP);
 		for(JPanel p: panels) {
 			overallP.add(p);
 		}
