@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.time.*;
 import java.util.ArrayList;
+import java.sql.*;
 //內容都是先上傳到資料庫，再透過資料庫讀到HomePage中顯示！
 
 public class EditPage extends JFrame{
@@ -11,9 +12,9 @@ public class EditPage extends JFrame{
 	private static final int TEXTCOMP_WIDTH = 500;
 	
 	private JPanel addItemP, topLeftP, topP, tagP, centerP, bottomP, overallP;
-	private JLabel titleL, locationL, addItemL, noteL, tagL, pictureL, whiteL;
+	private JLabel titleL, locationL, addItemL, noteL, tagL, pictureL, timeL, whiteL;
 	private JLabel itemNameL1, itemNameL2, itemNameL3, itemNameL4, itemQL;
-	private JTextField titleF, locationF;
+	private JTextField titleF, locationF timeF;
 	private JTextField itemNameF1, itemNameF2, itemNameF3, itemNameF4, itemQF1, itemQF2, itemQF3, itemQF4;
 	private JTextField tagF1, tagF2, tagF3, tagF4, tagF5;
 	private JTextArea noteArea;
@@ -50,12 +51,14 @@ public class EditPage extends JFrame{
 		noteL = new JLabel("新增備註（三十字為限）：");
 		tagL = new JLabel("新增標籤（五個為限）：");
 		pictureL = new JLabel(new imageIcon());//給使用者上傳
+		timeL = new JLabel("剩餘時間（分鐘）：");
 		whiteL = new JLabel(" ");//調整排版用
 	}
 	
 	public void creatTextField() {
 		titleF = new JTextField(TEXTCOMP_WIDTH);
 		locationF = new JTextField(TEXTCOMP_WIDTH);
+		timeF = new JTextField(TEXTCOMP_WIDTH);
 		
 		itemNameF1 = new JTextField("", 300);
 		itemNameF2 = new JTextField("", 300);
@@ -110,6 +113,7 @@ public class EditPage extends JFrame{
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將現有資料上傳到資料庫
+				//用使用者輸入的分鐘數，用SQL的select curtime()指令新增目前時間&add()加使用者輸入的分鐘數
 			}
 		});
 		
@@ -143,7 +147,7 @@ public class EditPage extends JFrame{
 		addItemP.add(itemQL);
 		addItemP.add(itemQF4);
 		
-		topLeftP = new JPanel(new GridLayout(4, 2));
+		topLeftP = new JPanel(new GridLayout(5, 2));
 		topLeftP.add(titleL);
 		topLeftP.add(titleF);
 		topLeftP.add(locationL);
@@ -152,6 +156,8 @@ public class EditPage extends JFrame{
 		topLeftP.add(whiteL);
 		topLeftP.add(addItemP);
 		topLeftP.add(whiteL);
+		topLeftP.add(timeL);
+		topLeftP.add(timeF);
 		
 		topP = new JPanel(new GridLayout(1, 2));
 		topP.add(topLeftP);
