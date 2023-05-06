@@ -2,6 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.sql.*;
 //輸入內容皆從資料庫中讀取！
 
 public class HomePage extends JFrame{
@@ -12,7 +13,7 @@ public class HomePage extends JFrame{
 	private JButton addPostButton;
 	private JPanel titleAndConP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
 	private JLabel noteLabel, conLabel, pictureLabel;
-	private JTextField titleF, postTimeF, locationF, tagF;
+	private JTextField titleF, leftTimeF, locationF, tagF;
 	private JTextArea itemArea, noteArea;
 	private ArrayList<JPanel>panels;
 	
@@ -49,9 +50,9 @@ public class HomePage extends JFrame{
 		titleF.setText("");
 		titleF.setEditable(false);
 		
-		postTimeF = new JTextField();
-		postTimeF.setText("");
-		postTimeF.setEditable(false);
+		leftTimeF = new JTextField();
+		leftTimeF.setText("");
+		leftTimeF.setEditable(false);
 		
 		locationF = new JTextField();
 		locationF.setText("");
@@ -78,7 +79,7 @@ public class HomePage extends JFrame{
 		titleAndConP.add(conLabel);
 		
 		timeAndLocationP = new JPanel();
-		timeAndLocationP.add(postTimeF);
+		timeAndLocationP.add(leftTimeF);
 		timeAndLocationP.add(locationF);
 		
 		pictureP = new JPanel();
