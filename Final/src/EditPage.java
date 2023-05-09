@@ -19,11 +19,19 @@ public class EditPage extends JFrame{
 	private JTextField tagF1, tagF2, tagF3, tagF4, tagF5;
 	private JTextArea noteArea;
 	private JButton updateBtn, deleteBtn;
+	
 	private String postTime;
+	private boolean sucess;
 	private ArrayList<Item>items;
 	private ArrayList<String>tags;
+	private LocalDateTime currentPoint = LocalDateTime.now();
+	Connection conn;
+	Statement stat;
 	
 	public EditPage() {
+		this.conn = conn;
+		stat = conn.createStatement();
+		
 		this.setTitle("編輯貼文");
 		this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
 		
@@ -50,7 +58,7 @@ public class EditPage extends JFrame{
 		
 		noteL = new JLabel("新增備註（三十字為限）：");
 		tagL = new JLabel("新增標籤（五個為限）：");
-		pictureL = new JLabel(new imageIcon());//給使用者上傳
+		pictureL = new JLabel(new imageIcon());//給使用者上傳 可參考：https://blog.csdn.net/u010159842/article/details/52574233
 		timeL = new JLabel("剩餘時間（分鐘）：");
 		whiteL = new JLabel(" ");//調整排版用
 	}
@@ -113,7 +121,38 @@ public class EditPage extends JFrame{
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將現有資料上傳到資料庫
-				//用使用者輸入的分鐘數，用SQL的select curtime()指令新增目前時間&add()加使用者輸入的分鐘數
+				String columns = "`title`, `location`";
+				for(int i = 0; i < items.size(); i++) {
+					columns += ", `itemName`" + i+1 + ", `itemQ`" + i+1;
+				}
+				columns += ", `note`";
+				for(int i = 0; i< tags.size(); i++) {
+					columns += ", `tag`" + i+1;
+				}
+				columns += ", `picture`, `postTime`";
+				
+				String values = titleF.getText() + locationF.getText();
+				for(Item item: items) {
+					values += ", " + item.getName() + ", " + item.getQ();
+				}
+				columns += noteArea.getText();
+				for(String tag:tags) {
+					values += ", " + tag;
+				}
+				values += ", " + pictureL.getsomething:) + ", " + currentPoint;//圖片上傳到資料庫，我也不知道怎麼寫，請隨意修改
+				//組合上傳資料庫的指令
+				try {
+					String query = "INSERT INTO `posts`(" + columns + ")VALUES(" + values + ");";
+					sucess = stat.execute(query);
+					if(sucess) {
+						ResultSet result = stat.getResultSet();
+						showResultSet(result);
+						result.close();
+					}
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}
+				//用使用者輸入的分鐘數，用SQL的select curtime()指令新增目前時間&add()加使用者輸入的分鐘數，算出endTime
 			}
 		});
 		
@@ -190,4 +229,21 @@ public class EditPage extends JFrame{
 	public String getPostTime() {
 		return postTime;//時間功能，還沒寫
 	}
+	
+	public static String showResultSet(ResultSet result) throws SQLException {
+		ResultSetMetaData metaData = result.getMetaData();
+		int columnCount = metaData.getColumnCount();
+		String output = "";
+		for (int i = 1; i <= columnCount; i++) {
+			output += String.format("%15s", metaData.getColumnLabel(i));
+		}
+		output += "\n";
+		while (result.next()) {
+			for (int i = 1; i <= columnCount; i++) {
+				output += String.format("%15s", result.getString(i));
+			}
+			output += "\n";
+		}
+		return output;
+	}//這是copy來的，要再調整
 }
