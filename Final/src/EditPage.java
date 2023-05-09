@@ -160,6 +160,17 @@ public class EditPage extends JFrame{
 		deleteBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將這篇貼文的資料刪除
+				try {
+					String query = "DELETE FROM `posts` WHERE `title` = " + titleF.getText() + ";";
+					sucess = stat.execute(query);
+					if(sucess) {
+						ResultSet result = stat.getResultSet();
+						showResultSet(result);
+						result.close();
+					}
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
