@@ -15,7 +15,7 @@ public class Main {
 		try {
 			Connection conn = DriverManager.getConnection(url, username, password);
 			System.out.println("DB Connectd");
-			HomePage frame = new HomePage();
+			HomePage frame = new HomePage(conn);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setVisible(true);
 		} catch (SQLException e) {
