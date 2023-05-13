@@ -11,13 +11,21 @@ public class HomePage extends JFrame{
 	private static final int TEXTCOMP_WIDTH = 500;
 	
 	private JButton updateButton, addPostButton;
-	private JPanel buttonsP, titleAndConP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
-	private JLabel noteLabel, conLabel, pictureLabel;
+	private JPanel buttonsP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
+	private JLabel noteLabel, pictureLabel;
 	private JTextField titleF, leftTimeF, locationF, tagF;
 	private JTextArea itemArea, noteArea;
-	private ArrayList<JPanel>panels;
 	
-	public HomePage() {
+	private EditPage editPage;
+	private ArrayList<JPanel>panels;
+	private boolean sucess;
+	Connection conn;
+	Statement stat;
+	
+	public HomePage (Connection conn) throws SQLException{
+		this.conn = conn;
+		stat = conn.createStatement();
+		
 		this.setTitle("惜食平臺");
 		this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
 		
@@ -34,22 +42,23 @@ public class HomePage extends JFrame{
 		
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//重新從資料庫讀取資料
+				creatPanel();
 			}
 		});
 		
 		addPostButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//跳到編輯視窗
+				try {
+					editPage = new EditPage(conn);
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
 	
 	public void creatJLabel() {
-		String condition = new String();
-		//判斷是否還在繼續發送，是的話顯示發送中的標籤，否則顯示發送結束標籤
 		noteLabel = new JLabel("備註：");
-		conLabel = new JLabel(condition);
 		pictureLabel = new JLabel(new imageIcon());//從資料庫中讀取圖片
 	}
 	
@@ -86,10 +95,6 @@ public class HomePage extends JFrame{
 		buttonsP.add(updateButton);
 		buttonsP.add(addPostButton);
 		
-		titleAndConP = new JPanel();
-		titleAndConP.add(titleF);
-		titleAndConP.add(conLabel);
-		
 		timeAndLocationP = new JPanel();
 		timeAndLocationP.add(leftTimeF);
 		timeAndLocationP.add(locationF);
@@ -98,7 +103,7 @@ public class HomePage extends JFrame{
 		pictureP.add(pictureLabel);
 		
 		postContentP = new JPanel();
-		postContentP.add(titleAndConP);
+		postContentP.add(titleF);
 		postContentP.add(timeAndLocationP);
 		postContentP.add(itemArea);
 		postContentP.add(noteLabel);
@@ -118,5 +123,20 @@ public class HomePage extends JFrame{
 		this.add(overallP);
 	}
 	
-	
+	public static String showResultSet(ResultSet result) throws SQLException {
+		ResultSetMetaData metaData = result.getMetaData();
+		int columnCount = metaData.getColumnCount();
+		String output = "";
+		for (int i = 1; i <= columnCount; i++) {
+			output += String.format("%15s", metaData.getColumnLabel(i));
+		}
+		output += "\n";
+		while (result.next()) {
+			for (int i = 1; i <= columnCount; i++) {
+				output += String.format("%15s", result.getString(i));
+			}
+			output += "\n";
+		}
+		return output;
+	}//這是copy來的，要再調整
 }
