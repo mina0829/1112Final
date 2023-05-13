@@ -2,6 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.time.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.sql.*;
 //內容都是先上傳到資料庫，再透過資料庫讀到HomePage中顯示！
@@ -11,14 +12,14 @@ public class EditPage extends JFrame{
 	private static final int FRAME_HEIGHT = 600;
 	private static final int TEXTCOMP_WIDTH = 500;
 	
-	private JPanel addItemP, topLeftP, topP, tagP, centerP, bottomP, overallP;
+	private JPanel addItemP, topLeftP, pictureP, topP, tagP, centerP, bottomP, overallP;
 	private JLabel titleL, locationL, addItemL, noteL, tagL, pictureL, timeL, whiteL;
 	private JLabel itemNameL1, itemNameL2, itemNameL3, itemNameL4, itemQL;
 	private JTextField titleF, locationF timeF;
 	private JTextField itemNameF1, itemNameF2, itemNameF3, itemNameF4, itemQF1, itemQF2, itemQF3, itemQF4;
 	private JTextField tagF1, tagF2, tagF3, tagF4, tagF5;
 	private JTextArea noteArea;
-	private JButton updateBtn, deleteBtn;
+	private JButton pictureBtn, updateBtn, deleteBtn;
 	
 	private String postTime;
 	private boolean sucess;
@@ -28,7 +29,7 @@ public class EditPage extends JFrame{
 	Connection conn;
 	Statement stat;
 	
-	public EditPage() {
+	public EditPage (Connection conn) throws SQLException {
 		this.conn = conn;
 		stat = conn.createStatement();
 		
@@ -58,7 +59,7 @@ public class EditPage extends JFrame{
 		
 		noteL = new JLabel("新增備註（三十字為限）：");
 		tagL = new JLabel("新增標籤（五個為限）：");
-		pictureL = new JLabel(new imageIcon());//給使用者上傳 可參考：https://blog.csdn.net/u010159842/article/details/52574233
+		pictureL = new JLabel("上傳圖片");//給使用者上傳 可參考：https://blog.csdn.net/u010159842/article/details/52574233
 		timeL = new JLabel("剩餘時間（分鐘）：");
 		whiteL = new JLabel(" ");//調整排版用
 	}
@@ -117,6 +118,33 @@ public class EditPage extends JFrame{
 	}
 	
 	public void creatButton() {
+		pictureBtn = new JButton("上傳圖片");
+		pictureBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                    public boolean accept(File file) {
+                        return file.getName().toLowerCase().endsWith(".jpg")
+                                || file.getName().toLowerCase().endsWith(".jpeg")
+                                || file.getName().toLowerCase().endsWith(".png")
+                                || file.isDirectory();
+                    }
+
+                    public String getDescription() {
+                        return "圖片文件 (*.jpg, *.jpeg, *.png)";
+                    }
+                });
+
+                int result = fileChooser.showOpenDialog(new JFrame());
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    ImageIcon icon = new ImageIcon(selectedFile.getPath());
+                    pictureL.setIcon(icon);;
+                }
+            }
+        });
+		
 		updateBtn = new JButton("更新編輯");
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -144,11 +172,6 @@ public class EditPage extends JFrame{
 				try {
 					String query = "INSERT INTO `posts`(" + columns + ")VALUES(" + values + ");";
 					sucess = stat.execute(query);
-					if(sucess) {
-						ResultSet result = stat.getResultSet();
-						showResultSet(result);
-						result.close();
-					}
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}
@@ -163,11 +186,6 @@ public class EditPage extends JFrame{
 				try {
 					String query = "DELETE FROM `posts` WHERE `title` = " + titleF.getText() + ";";
 					sucess = stat.execute(query);
-					if(sucess) {
-						ResultSet result = stat.getResultSet();
-						showResultSet(result);
-						result.close();
-					}
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}
@@ -240,21 +258,4 @@ public class EditPage extends JFrame{
 	public String getPostTime() {
 		return postTime;//時間功能，還沒寫
 	}
-	
-	public static String showResultSet(ResultSet result) throws SQLException {
-		ResultSetMetaData metaData = result.getMetaData();
-		int columnCount = metaData.getColumnCount();
-		String output = "";
-		for (int i = 1; i <= columnCount; i++) {
-			output += String.format("%15s", metaData.getColumnLabel(i));
-		}
-		output += "\n";
-		while (result.next()) {
-			for (int i = 1; i <= columnCount; i++) {
-				output += String.format("%15s", result.getString(i));
-			}
-			output += "\n";
-		}
-		return output;
-	}//這是copy來的，要再調整
 }
