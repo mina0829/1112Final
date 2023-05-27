@@ -1,10 +1,12 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.time.*;
 import java.io.File;
+import java.util.Date;
 import java.util.ArrayList;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 //內容都是先上傳到資料庫，再透過資料庫讀到HomePage中顯示！
 
 public class EditPage extends JFrame{
@@ -25,7 +27,9 @@ public class EditPage extends JFrame{
 	private boolean sucess;
 	private ArrayList<Item>items;
 	private ArrayList<String>tags;
-	private LocalDateTime currentPoint = LocalDateTime.now();
+	private Date date = new Date();
+	private SimpleDateFormat ft = new SimpleDateFormat ("MM-dd HH:mm");
+	private Calendar calendar = Calendar.getInstance();
 	Connection conn;
 	Statement stat;
 	
@@ -149,33 +153,39 @@ public class EditPage extends JFrame{
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將現有資料上傳到資料庫
-				String columns = "`title`, `location`";
-				for(int i = 0; i < items.size(); i++) {
-					columns += ", `itemName`" + i+1 + ", `itemQ`" + i+1;
-				}
-				columns += ", `note`";
-				for(int i = 0; i< tags.size(); i++) {
-					columns += ", `tag`" + i+1;
-				}
-				columns += ", `picture`, `postTime`";
-				
-				String values = titleF.getText() + locationF.getText();
-				for(Item item: items) {
-					values += ", " + item.getName() + ", " + item.getQ();
-				}
-				columns += noteArea.getText();
-				for(String tag:tags) {
-					values += ", " + tag;
-				}
-				values += ", " + pictureL.getsomething:) + ", " + currentPoint;//圖片上傳到資料庫，我也不知道怎麼寫，請隨意修改
-				//組合上傳資料庫的指令
+				String query = "INSERT INTO `posts`(title, location, itemName1, itemQ1, itemName2, itemQ2, itemName3, itemQ3, itemName4, itemQ4, note, tag1, tag2, tag3, tag4, tag5, picture, leftTime, endTime)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 				try {
-					String query = "INSERT INTO `posts`(" + columns + ")VALUES(" + values + ");";
-					sucess = stat.execute(query);
+					PreparedStatement stat = conn.prepareStatement(query);
+					
+					stat.setString(1, titleF.getText());
+					stat.setString(2, locationF.getText());
+					stat.setString(3, itemNameF1.getText());
+					stat.setInt(4, Integer.valueOf(itemQF1.getText()));
+					stat.setString(5, itemNameF2.getText());
+					stat.setInt(6, Integer.valueOf(itemQF2.getText()));
+					stat.setString(7, itemNameF3.getText());
+					stat.setInt(8, Integer.valueOf(itemQF3.getText()));
+					stat.setString(9, itemNameF4.getText());
+					stat.setInt(10, Integer.valueOf(itemQF4.getText()));
+					stat.setString(11, noteArea.getText());
+					stat.setString(12, tagF1.getText());
+					stat.setString(13, tagF2.getText());
+					stat.setString(14, tagF3.getText());
+					stat.setString(15, tagF4.getText());
+					stat.setString(16, tagF5.getText());
+					stat.setBlob(17, pictureL.getIcon());//保留，還沒想好
+					stat.setString(18, ft.format(date));
+					
+					calendar.setTime(date);
+					calendar.add(Calendar.MINUTE, Integer.valueOf(timeF.getText()));
+					Date endDate = calendar.getTime();
+					stat.setString(19, ft.format(endDate));
+					
+					sucess = stat.execute();
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}
-				//用使用者輸入的分鐘數，用SQL的select curtime()指令新增目前時間&add()加使用者輸入的分鐘數，算出endTime
 			}
 		});
 		
@@ -253,9 +263,5 @@ public class EditPage extends JFrame{
 		overallP.add(centerP);
 		overallP.add(bottomP);
 		this.add(overallP);
-	}
-	
-	public String getPostTime() {
-		return postTime;//時間功能，還沒寫
 	}
 }
