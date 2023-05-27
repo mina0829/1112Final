@@ -123,6 +123,35 @@ public class HomePage extends JFrame{
 		this.add(overallP);
 	}
 	
+	public void keywordSearch(){
+		 String keyword = keyWordF.getText();
+		 String[] columns = {
+				 "title", "location", 
+				 "itemName1", "itemName2", "itemName3",  "itemName3", "itenName4",
+				 "note", "tag1", "tag2", "tag3", "tag4", "tag5"
+		 };
+		 for(String column : columns) {
+			 String query = "SELECT * FROM posts WHERE "+column+" LIKE " + keyword;
+			 try {
+		            PreparedStatement statement = conn.prepareStatement(query);
+		            statement.setString(1, "%" + keyword + "%");
+		            ResultSet resultSet = statement.executeQuery();
+	
+		            // 處理搜索结果
+		            while (resultSet.next()) {
+		                // 處理每一行數據
+		                String result = resultSet.getString(column);
+		                System.out.println(result);
+		            }
+	
+		    
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+	   }
+	 }
+	 //設定button, textField
+	
 	public static String showResultSet(ResultSet result) throws SQLException {
 		ResultSetMetaData metaData = result.getMetaData();
 		int columnCount = metaData.getColumnCount();
