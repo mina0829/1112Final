@@ -160,16 +160,45 @@ public class HomePage extends JFrame{
 		ResultSetMetaData metaData = result.getMetaData();
 		int columnCount = metaData.getColumnCount();
 		String output = "";
-		for (int i = 1; i <= columnCount; i++) {
-			output += String.format("%15s", metaData.getColumnLabel(i));
-		}
-		output += "\n";
+		ArrayList<String> items = new ArrayList<String>();
+		ArrayList<String>tags =  new ArrayList<String>();
+		
 		while (result.next()) {
-			for (int i = 1; i <= columnCount; i++) {
-				output += String.format("%15s", result.getString(i));
+			String title = result.getString(1);
+			String location = result.getString(2);
+			
+			for(int i = 1; i < 5; i++) {
+				String itemName = "itemName" + (i);
+				if(result.getString(itemName) != null) {
+					items.add(String.format("%s，剩餘%d份", result.getString(itemName), result.getInt((i+1)*2)));
+				}
+			}
+			
+			String note = result.getString(9);
+			for(int i = 1; i < 6; i++) {
+				String tag = "tag" + i;
+				if(result.getString(tag) != null){
+					tags.add(String.format("#%s", result.getString(tag)));
+				}
+			}
+			
+			//圖片顯示
+			
+			String endTime = result.getString(19);
+			
+			output += String.format("%s\n%s．%s\n", title, endTime, location);
+			
+			for(String item: items) {
+				output += String.format("%s\n", item);
+			}
+			
+			output += String.format("備註：%s\n", note);
+			
+			for(String tag: tags) {
+				output += tag;
 			}
 			output += "\n";
 		}
 		return output;
-	}//這是copy來的，要再調整
+	}
 }
