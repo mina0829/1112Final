@@ -13,7 +13,7 @@ public class HomePage extends JFrame{
 	private JButton updateButton, addPostButton;
 	private JPanel buttonsP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
 	private JLabel noteLabel, pictureLabel;
-	private JTextField titleF, leftTimeF, locationF, tagF;
+	private JTextField titleF, leftTimeF, locationF, tagF, keyWordF;
 	private JTextArea itemArea, noteArea;
 	
 	private EditPage editPage;
@@ -78,6 +78,10 @@ public class HomePage extends JFrame{
 		tagF = new JTextField(TEXTCOMP_WIDTH);
 		tagF.setText("");
 		tagF.setEditable(false);
+		
+		keyWordF = new JTextField(10);
+		keyWordF.setText("");
+		keyWordF.setEditable(true);
 	}
 	
 	public void creatTextArea() {//從資料庫中讀取文字內容
