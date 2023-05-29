@@ -12,11 +12,10 @@ import java.util.Calendar;
 public class EditPage extends JFrame{
 	private static final int FRAME_WIDTH = 800;
 	private static final int FRAME_HEIGHT = 600;
-	private static final int TEXTCOMP_WIDTH = 500;
 	
-	private JPanel addItemP, topLeftP, pictureP, topP, tagP, centerP, bottomP, overallP;
-	private JLabel titleL, locationL, addItemL, noteL, tagL, pictureL, timeL, whiteL;
-	private JLabel itemNameL1, itemNameL2, itemNameL3, itemNameL4, itemQL;
+	private JPanel addItemP1, addItemP2, addItemP3, addItemP4, topP, tagP, centerP, bottomP, overallP, itemsP;
+	private JLabel titleL, locationL, addItemL, noteL, tagL, timeL, whiteL;
+	private JLabel itemNameL1, itemNameL2, itemNameL3, itemNameL4, itemQL1, itemQL2, itemQL3, itemQL4;
 	private JTextField titleF, locationF, timeF;
 	private JTextField itemNameF1, itemNameF2, itemNameF3, itemNameF4, itemQF1, itemQF2, itemQF3, itemQF4;
 	private JTextField tagF1, tagF2, tagF3, tagF4, tagF5;
@@ -25,6 +24,7 @@ public class EditPage extends JFrame{
 	
 	private String postTime;
 	private boolean sucess;
+	private int i = 0;
 	private ArrayList<Item>items;
 	private ArrayList<String>tags;
 	private Date date = new Date();
@@ -59,28 +59,30 @@ public class EditPage extends JFrame{
 		itemNameL2 = new JLabel("品項二：");
 		itemNameL3 = new JLabel("品項三：");
 		itemNameL4 = new JLabel("品項四：");
-		itemQL = new JLabel("，數量：");
+		itemQL1 = new JLabel("，數量：");
+		itemQL2 = new JLabel("，數量：");
+		itemQL3 = new JLabel("，數量：");
+		itemQL4 = new JLabel("，數量：");
 		
 		noteL = new JLabel("新增備註（三十字為限）：");
 		tagL = new JLabel("新增標籤（五個為限）：");
-		pictureL = new JLabel("上傳圖片");//給使用者上傳 可參考：https://blog.csdn.net/u010159842/article/details/52574233
 		timeL = new JLabel("剩餘時間（分鐘）：");
-		whiteL = new JLabel(" ");//調整排版用
+		whiteL = new JLabel(" ");
 	}
 	
 	public void creatTextField() {
-		titleF = new JTextField(TEXTCOMP_WIDTH);
-		locationF = new JTextField(TEXTCOMP_WIDTH);
-		timeF = new JTextField(TEXTCOMP_WIDTH);
+		titleF = new JTextField(20);
+		locationF = new JTextField(10);
+		timeF = new JTextField(10);
 		
-		itemNameF1 = new JTextField("", 300);
-		itemNameF2 = new JTextField("", 300);
-		itemNameF3 = new JTextField("", 300);
-		itemNameF4 = new JTextField("", 300);
-		itemQF1 = new JTextField("0", 100);
-		itemQF2 = new JTextField("0", 100);
-		itemQF3 = new JTextField("0", 100);
-		itemQF4 = new JTextField("0", 100);
+		itemNameF1 = new JTextField(null, 10);
+		itemNameF2 = new JTextField(null, 10);
+		itemNameF3 = new JTextField(null, 10);
+		itemNameF4 = new JTextField(null, 10);
+		itemQF1 = new JTextField("0", 5);
+		itemQF2 = new JTextField("0", 5);
+		itemQF3 = new JTextField("0", 5);
+		itemQF4 = new JTextField("0", 5);
 		
 		Item item1 = new Item(itemNameF1.getText(), Integer.valueOf(itemQF1.getText()));
 		Item item2 = new Item(itemNameF2.getText(), Integer.valueOf(itemQF2.getText()));
@@ -92,72 +94,33 @@ public class EditPage extends JFrame{
 		items.add(item3);
 		items.add(item4);
 		
-		for(Item item: items) {
-			if(item.getQ() == 0) {
-				items.remove(item);
-			}
-		}//移除沒有數量的商品
 		
-		tagF1 = new JTextField("", 300);
-		tagF2 = new JTextField("", 300);
-		tagF3 = new JTextField("", 300);
-		tagF4 = new JTextField("", 300);
-		tagF5 = new JTextField("", 300);
+		tagF1 = new JTextField("", 10);
+		tagF2 = new JTextField("", 10);
+		tagF3 = new JTextField("", 10);
+		tagF4 = new JTextField("", 10);
+		tagF5 = new JTextField("", 10);
 		
 		tags.add(tagF1.getText());
 		tags.add(tagF2.getText());
 		tags.add(tagF3.getText());
 		tags.add(tagF4.getText());
 		tags.add(tagF5.getText());
-		
-		for(String tag: tags) {
-			if(tag.equals("")) {
-				tags.remove(tag);
-			}
-		}//移除空白的tag
 	}
 	
 	public void creatTextArea() {
-		noteArea = new JTextArea(2, TEXTCOMP_WIDTH);
+		noteArea = new JTextArea(2, 40);
 	}
 	
 	public void creatButton() {
-		pictureBtn = new JButton("上傳圖片");
-		pictureBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-                    public boolean accept(File file) {
-                        return file.getName().toLowerCase().endsWith(".jpg")
-                                || file.getName().toLowerCase().endsWith(".jpeg")
-                                || file.getName().toLowerCase().endsWith(".png")
-                                || file.isDirectory();
-                    }
-
-                    public String getDescription() {
-                        return "圖片文件 (*.jpg, *.jpeg, *.png)";
-                    }
-                });
-
-                int result = fileChooser.showOpenDialog(new JFrame());
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    ImageIcon icon = new ImageIcon(selectedFile.getPath());
-                    pictureL.setIcon(icon);;
-                }
-            }
-        });
-		
 		updateBtn = new JButton("更新編輯");
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將現有資料上傳到資料庫
-				int i = 0;
 				try {
 					if(i == 0) {
-						String query = "INSERT INTO `posts`(title, location, itemName1, itemQ1, itemName2, itemQ2, itemName3, itemQ3, itemName4, itemQ4, note, tag1, tag2, tag3, tag4, tag5, picture, leftTime, endTime, state)"
-								+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+						String query = "INSERT INTO `posts`(title, location, itemName1, itemQ1, itemName2, itemQ2, itemName3, itemQ3, itemName4, itemQ4, note, tag1, tag2, tag3, tag4, tag5, leftTime, endTime, state)"
+								+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 						PreparedStatement stat = conn.prepareStatement(query);
 					
 						stat.setString(1, titleF.getText());
@@ -176,19 +139,17 @@ public class EditPage extends JFrame{
 						stat.setString(14, tagF3.getText());
 						stat.setString(15, tagF4.getText());
 						stat.setString(16, tagF5.getText());
-						stat.setBlob(17, pictureL.getIcon());//保留，還沒想好
-						stat.setString(18, ft.format(date));
-						stat.setInt(20, 1);
+						stat.setString(17, ft.format(date));
+						stat.setInt(19, 1);
 					
 						calendar.setTime(date);
 						calendar.add(Calendar.MINUTE, Integer.valueOf(timeF.getText()));
 						Date endDate = calendar.getTime();
-						stat.setString(19, ft.format(endDate));
+						stat.setString(18, ft.format(endDate));
 					
 						sucess = stat.execute();
 						i++;
 					}else{
-						//更新gj4xu;4
 						String query = "UPDATE `posts`SET itemQ1 = ?, itemQ2 = ?, itemQ3 = ?, itemQ4 = ?,"
 								+"WHERE title = ?";
 						PreparedStatement stat = conn.prepareStatement(query);
@@ -223,42 +184,44 @@ public class EditPage extends JFrame{
 	}
 	
 	public void creatPanel() {
-		addItemP = new JPanel(new GridLayout(4, 4));
-		addItemP.add(itemNameL1);
-		addItemP.add(itemNameF1);
-		addItemP.add(itemQL);
-		addItemP.add(itemQF1);
+		addItemP1 = new JPanel(new GridLayout(1, 4));
+		addItemP1.add(itemNameL1);
+		addItemP1.add(itemNameF1);
+		addItemP1.add(itemQL1);
+		addItemP1.add(itemQF1);
 		
-		addItemP.add(itemNameL2);
-		addItemP.add(itemNameF2);
-		addItemP.add(itemQL);
-		addItemP.add(itemQF2);
+		addItemP2 = new JPanel(new GridLayout(1, 4));
+		addItemP2.add(itemNameL2);
+		addItemP2.add(itemNameF2);
+		addItemP2.add(itemQL2);
+		addItemP2.add(itemQF2);
 		
-		addItemP.add(itemNameL3);
-		addItemP.add(itemNameF3);
-		addItemP.add(itemQL);
-		addItemP.add(itemQF3);
+		addItemP3 = new JPanel(new GridLayout(1, 4));
+		addItemP3.add(itemNameL3);
+		addItemP3.add(itemNameF3);
+		addItemP3.add(itemQL3);
+		addItemP3.add(itemQF3);
 		
-		addItemP.add(itemNameL4);
-		addItemP.add(itemNameF4);
-		addItemP.add(itemQL);
-		addItemP.add(itemQF4);
+		addItemP4 = new JPanel(new GridLayout(1, 4));
+		addItemP4.add(itemNameL4);
+		addItemP4.add(itemNameF4);
+		addItemP4.add(itemQL4);
+		addItemP4.add(itemQF4);
 		
-		topLeftP = new JPanel(new GridLayout(5, 2));
-		topLeftP.add(titleL);
-		topLeftP.add(titleF);
-		topLeftP.add(locationL);
-		topLeftP.add(locationF);
-		topLeftP.add(addItemL);
-		topLeftP.add(whiteL);
-		topLeftP.add(addItemP);
-		topLeftP.add(whiteL);
-		topLeftP.add(timeL);
-		topLeftP.add(timeF);
+		itemsP = new JPanel(new GridLayout(5, 1));
+		itemsP.add(addItemL);
+		itemsP.add(addItemP1);
+		itemsP.add(addItemP2);
+		itemsP.add(addItemP3);
+		itemsP.add(addItemP4);
 		
-		topP = new JPanel(new GridLayout(1, 2));
-		topP.add(topLeftP);
-		topP.add(pictureL);
+		topP = new JPanel(new GridLayout(3, 2));
+		topP.add(titleL);
+		topP.add(titleF);
+		topP.add(locationL);
+		topP.add(locationF);
+		topP.add(timeL);
+		topP.add(timeF);
 		
 		tagP = new JPanel(new GridLayout(1, 5));
 		tagP.add(tagF1);
@@ -273,13 +236,15 @@ public class EditPage extends JFrame{
 		centerP.add(tagL);
 		centerP.add(tagP);
 		
-		bottomP = new JPanel(new GridLayout(1, 2));
+		bottomP = new JPanel();
 		bottomP.add(updateBtn);
 		bottomP.add(deleteBtn);
 		
-		overallP = new JPanel(new GridLayout(3, 1));
+		overallP = new JPanel();
 		overallP.add(topP);
+		overallP.add(itemsP);
 		overallP.add(centerP);
+		overallP.add(whiteL);
 		overallP.add(bottomP);
 		this.add(overallP);
 	}
