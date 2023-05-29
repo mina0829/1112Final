@@ -11,10 +11,9 @@ public class HomePage extends JFrame{
 	private static final int TEXTCOMP_WIDTH = 500;
 	
 	private JButton updateButton, addPostButton;
-	private JPanel buttonsP, timeAndLocationP, pictureP, postContentP, wholePostP, overallP;
-	private JLabel noteLabel, pictureLabel;
-	private JTextField titleF, leftTimeF, locationF, tagF, keyWordF;
-	private JTextArea itemArea, noteArea;
+	private JPanel buttonsP, postsP, overallP;
+	private JTextField keyWordF;
+	private JTextArea postsArea;
 	
 	private EditPage editPage;
 	private ArrayList<JPanel>panels;
@@ -30,8 +29,6 @@ public class HomePage extends JFrame{
 		this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
 		
 		creatButton();
-		creatJLabel();
-		creatTextField();
 		creatTextArea();
 		creatPanel();
 	}
@@ -42,7 +39,17 @@ public class HomePage extends JFrame{
 		
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				creatPanel();
+				String query = "SELECT * FROM `posts` WHERE state = 1";
+				try{
+					sucess = stat.execute(query);
+					if(sucess) {
+						ResultSet result = stat.getResultSet();
+						postsArea.setText(showResultSet(result));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				//這邊要修改，改成只update結果顯示區，在顯示區做時間到了就不顯示的功能
 			}
 		});
 		
@@ -57,73 +64,19 @@ public class HomePage extends JFrame{
 		});
 	}
 	
-	public void creatJLabel() {
-		noteLabel = new JLabel("備註：");
-		pictureLabel = new JLabel(new imageIcon());//從資料庫中讀取圖片
-	}
-	
-	public void creatTextField() {//從資料庫中讀取文字內容
-		titleF = new JTextField(TEXTCOMP_WIDTH);
-		titleF.setText("");
-		titleF.setEditable(false);
-		
-		leftTimeF = new JTextField();
-		leftTimeF.setText("");
-		leftTimeF.setEditable(false);
-		
-		locationF = new JTextField();
-		locationF.setText("");
-		locationF.setEditable(false);
-		
-		tagF = new JTextField(TEXTCOMP_WIDTH);
-		tagF.setText("");
-		tagF.setEditable(false);
-		
-		keyWordF = new JTextField(10);
-		keyWordF.setText("");
-		keyWordF.setEditable(true);
-	}
-	
-	public void creatTextArea() {//從資料庫中讀取文字內容
-		itemArea = new JTextArea(5, TEXTCOMP_WIDTH);
-		itemArea.setText("");
-		itemArea.setEditable(false);
-		
-		noteArea = new JTextArea(2, TEXTCOMP_WIDTH);
-		noteArea.setText("");
-		noteArea.setEditable(false);
+	public void creatTextArea() {
+		postsArea = new JTextArea();
+		postsArea.setText("");
+		postsArea.setEditable(false);
 	}
 	
 	public void creatPanel() {
-		buttonsP = new JPanel();
-		buttonsP.add(updateButton);
-		buttonsP.add(addPostButton);
+		postsP = new JPanel();
+		postsP.add(postsArea);
 		
-		timeAndLocationP = new JPanel();
-		timeAndLocationP.add(leftTimeF);
-		timeAndLocationP.add(locationF);
-		
-		pictureP = new JPanel();
-		pictureP.add(pictureLabel);
-		
-		postContentP = new JPanel();
-		postContentP.add(titleF);
-		postContentP.add(timeAndLocationP);
-		postContentP.add(itemArea);
-		postContentP.add(noteLabel);
-		postContentP.add(noteArea);
-		postContentP.add(tagF);
-		
-		wholePostP = new JPanel(new GridLayout(1, 2));
-		wholePostP.add(postContentP);
-		wholePostP.add(pictureP);
-		panels.add(wholePostP);
-		
-		overallP = new JPanel(new GridLayout(panels.size()+1, 1));
+		overallP = new JPanel(new GridLayout(2, 1));
 		overallP.add(buttonsP);
-		for(JPanel p: panels) {
-			overallP.add(p);
-		}
+		overallP.add(postsP);
 		this.add(overallP);
 	}
 	
@@ -147,15 +100,13 @@ public class HomePage extends JFrame{
 		                String result = resultSet.getString(column);
 		                System.out.println(result);
 		            }
-	
-		    
 		        } catch (SQLException e) {
 		            e.printStackTrace();
 		        }
 	   }
 	 }
 	 //設定button, textField
-	
+
 	public static String showResultSet(ResultSet result) throws SQLException {
 		ResultSetMetaData metaData = result.getMetaData();
 		int columnCount = metaData.getColumnCount();
