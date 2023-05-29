@@ -8,10 +8,10 @@ import java.sql.*;
 public class HomePage extends JFrame{
 	private static final int FRAME_WIDTH = 800;
 	private static final int FRAME_HEIGHT = 600;
-	private static final int TEXTCOMP_WIDTH = 500;
 	
-	private JButton updateButton, addPostButton;
-	private JPanel buttonsP, postsP, overallP;
+	private JLabel keyWordL;
+	private JButton updateButton, addPostButton, searchButton;
+	private JPanel buttonsP, postsP, overallP, keyWordP;
 	private JTextField keyWordF;
 	private JTextArea postsArea;
 	
@@ -33,9 +33,14 @@ public class HomePage extends JFrame{
 		creatPanel();
 	}
 	
+	public void creatLabel() {
+		keyWordL = new JLabel("關鍵字：");
+	}
+	
 	public void creatButton() {
 		updateButton = new JButton("更新頁面");
 		addPostButton = new JButton("新增貼文");
+		searchButton = new JButton("搜尋");
 		
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -62,6 +67,12 @@ public class HomePage extends JFrame{
 				}
 			}
 		});
+		
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				keywordSearch();
+			}
+		});
 	}
 	
 	public void creatTextArea() {
@@ -70,12 +81,32 @@ public class HomePage extends JFrame{
 		postsArea.setEditable(false);
 	}
 	
+	public void creatTextField() {
+		keyWordF = new JTextField(5);
+	}
+	
+		public void creatTextArea() {
+		postsArea = new JTextArea(800, 400);
+		postsArea.setText("");
+		postsArea.setEditable(false);
+	}
+	
 	public void creatPanel() {
+		buttonsP = new JPanel();
+		buttonsP.add(updateButton);
+		buttonsP.add(addPostButton);
+		
+		keyWordP = new JPanel();
+		keyWordP.add(keyWordL);
+		keyWordP.add(keyWordF);
+		keyWordP.add(searchButton);
+		
 		postsP = new JPanel();
 		postsP.add(postsArea);
 		
 		overallP = new JPanel(new GridLayout(2, 1));
 		overallP.add(buttonsP);
+		overallP.add(keyWordP);
 		overallP.add(postsP);
 		this.add(overallP);
 	}
