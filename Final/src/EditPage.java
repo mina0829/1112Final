@@ -17,7 +17,7 @@ public class EditPage extends JFrame{
 	private JPanel addItemP, topLeftP, pictureP, topP, tagP, centerP, bottomP, overallP;
 	private JLabel titleL, locationL, addItemL, noteL, tagL, pictureL, timeL, whiteL;
 	private JLabel itemNameL1, itemNameL2, itemNameL3, itemNameL4, itemQL;
-	private JTextField titleF, locationF timeF;
+	private JTextField titleF, locationF, timeF;
 	private JTextField itemNameF1, itemNameF2, itemNameF3, itemNameF4, itemQF1, itemQF2, itemQF3, itemQF4;
 	private JTextField tagF1, tagF2, tagF3, tagF4, tagF5;
 	private JTextArea noteArea;
@@ -33,7 +33,7 @@ public class EditPage extends JFrame{
 	Connection conn;
 	Statement stat;
 	
-	public EditPage (Connection conn) throws SQLException {
+	public EditPage (Connection conn) throws SQLException{
 		this.conn = conn;
 		stat = conn.createStatement();
 		
@@ -153,36 +153,55 @@ public class EditPage extends JFrame{
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將現有資料上傳到資料庫
-				String query = "INSERT INTO `posts`(title, location, itemName1, itemQ1, itemName2, itemQ2, itemName3, itemQ3, itemName4, itemQ4, note, tag1, tag2, tag3, tag4, tag5, picture, leftTime, endTime)"
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+				int i = 0;
 				try {
-					PreparedStatement stat = conn.prepareStatement(query);
+					if(i == 0) {
+						String query = "INSERT INTO `posts`(title, location, itemName1, itemQ1, itemName2, itemQ2, itemName3, itemQ3, itemName4, itemQ4, note, tag1, tag2, tag3, tag4, tag5, picture, leftTime, endTime, state)"
+								+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+						PreparedStatement stat = conn.prepareStatement(query);
 					
-					stat.setString(1, titleF.getText());
-					stat.setString(2, locationF.getText());
-					stat.setString(3, itemNameF1.getText());
-					stat.setInt(4, Integer.valueOf(itemQF1.getText()));
-					stat.setString(5, itemNameF2.getText());
-					stat.setInt(6, Integer.valueOf(itemQF2.getText()));
-					stat.setString(7, itemNameF3.getText());
-					stat.setInt(8, Integer.valueOf(itemQF3.getText()));
-					stat.setString(9, itemNameF4.getText());
-					stat.setInt(10, Integer.valueOf(itemQF4.getText()));
-					stat.setString(11, noteArea.getText());
-					stat.setString(12, tagF1.getText());
-					stat.setString(13, tagF2.getText());
-					stat.setString(14, tagF3.getText());
-					stat.setString(15, tagF4.getText());
-					stat.setString(16, tagF5.getText());
-					stat.setBlob(17, pictureL.getIcon());//保留，還沒想好
-					stat.setString(18, ft.format(date));
+						stat.setString(1, titleF.getText());
+						stat.setString(2, locationF.getText());
+						stat.setString(3, itemNameF1.getText());
+						stat.setInt(4, Integer.valueOf(itemQF1.getText()));
+						stat.setString(5, itemNameF2.getText());
+						stat.setInt(6, Integer.valueOf(itemQF2.getText()));
+						stat.setString(7, itemNameF3.getText());
+						stat.setInt(8, Integer.valueOf(itemQF3.getText()));
+						stat.setString(9, itemNameF4.getText());
+						stat.setInt(10, Integer.valueOf(itemQF4.getText()));
+						stat.setString(11, noteArea.getText());
+						stat.setString(12, tagF1.getText());
+						stat.setString(13, tagF2.getText());
+						stat.setString(14, tagF3.getText());
+						stat.setString(15, tagF4.getText());
+						stat.setString(16, tagF5.getText());
+						stat.setBlob(17, pictureL.getIcon());//保留，還沒想好
+						stat.setString(18, ft.format(date));
+						stat.setInt(20, 1);
 					
-					calendar.setTime(date);
-					calendar.add(Calendar.MINUTE, Integer.valueOf(timeF.getText()));
-					Date endDate = calendar.getTime();
-					stat.setString(19, ft.format(endDate));
+						calendar.setTime(date);
+						calendar.add(Calendar.MINUTE, Integer.valueOf(timeF.getText()));
+						Date endDate = calendar.getTime();
+						stat.setString(19, ft.format(endDate));
 					
-					sucess = stat.execute();
+						sucess = stat.execute();
+						i++;
+					}else{
+						//更新gj4xu;4
+						String query = "UPDATE `posts`SET itemQ1 = ?, itemQ2 = ?, itemQ3 = ?, itemQ4 = ?,"
+								+"WHERE title = ?";
+						PreparedStatement stat = conn.prepareStatement(query);
+					
+						stat.setString(1, itemQF1.getText());
+						stat.setString(2, itemQF2.getText());
+						stat.setString(3, itemQF3.getText());
+						stat.setString(4, itemQF4.getText());
+						stat.setString(5, titleF.getText());
+					
+						sucess = stat.execute();
+					}
+					
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}
