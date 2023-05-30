@@ -85,7 +85,7 @@ public class HomePage extends JFrame{
 				ResultSet result = stat.getResultSet();
 				System.out.println("check");
 				postsArea.repaint();
-				postsArea.setText(showResultSet(result, stat));
+				postsArea.setText(showResultSet(result));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -158,20 +158,27 @@ public class HomePage extends JFrame{
 	        for (int i = 1; i <= columns.length; i++) {
 	            statement.setString(i, "%" + keyword + "%");
 	        }
-	        System.out.println(query);
+
 	        ResultSet resultSet = statement.executeQuery();
 
 	        while (resultSet.next()) {
+	            PreparedStatement subStatement = conn.prepareStatement(query);
+		        for (int i = 1; i <= columns.length; i++) {
+		        	subStatement.setString(i, "%" + keyword + "%");
+		        }
+
+		        ResultSet subResultSet = subStatement.executeQuery();
 	            postsArea.repaint();
-	            postsArea.setText(showResultSet(resultSet, stat));
+	            postsArea.setText(showResultSet(subResultSet));
 	        }
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } catch (ParseException e) {
 	        e.printStackTrace();
 	    }
-	 }
-	 //設定button, textField
+	}
+	 
 	
 	public boolean checkTime() {
 	    boolean finish = false;
@@ -186,7 +193,6 @@ public class HomePage extends JFrame{
 	            Date endTime = dateFormat.parse(endTimeString); // 將 endTime 字串轉換為日期物件
 	            
 	            Date currentDate = new Date();
-	            //Calendar currentCalendar = Calendar.getInstance(); // 取得目前時間的 Calendar 物件
 
 	            if (currentDate.after(endTime)) {
 	            	System.out.println(currentDate.toString() + " after " + endTime.toString());
@@ -205,48 +211,47 @@ public class HomePage extends JFrame{
 	    return finish;
 	}
 
-	public static String showResultSet(ResultSet result, Statement stat) throws SQLException, ParseException{
-		ResultSetMetaData metaData = result.getMetaData();
-		int columnCount = metaData.getColumnCount();
-		String output = "";
-		ArrayList<String> items = new ArrayList<String>();
-		ArrayList<String>tags =  new ArrayList<String>();
-		
-		while (result.next()) {
-			String title = result.getString(1);
-			String location = result.getString(2);
-			
-			for(int i = 1; i < 5; i++) {
-				if(result.getInt((i+1)*2) != 0) {
-						items.add(String.format("%s，剩餘%d份", result.getString((i*2)+1), result.getInt((i+1)*2)));
-				}
-			}//數字為0時不顯示
-			
-			String note = result.getString(11);
-			
-			for(int i = 1; i < 6; i++) {
-				tags.add(result.getString(i+11) + " ");
-			}
-			
-			String endTime = result.getString(18);
-			
-			output += String.format("%s\n%s．%s\n", title, endTime, location);
-			
-			for(String item: items) {
-				output += String.format("%s\n", item);
-			}
-			
-			output += String.format("備註：%s\n", note);
-			
-			output += "#標籤：";
-			for(String tag: tags) {
-				output += tag;
-			}
-			output +="\n" + "-".repeat(40) + "\n";
-			
-			items.clear();
-			tags.clear();
-		}
-		return output;
+	public static String showResultSet(ResultSet result) throws SQLException, ParseException {
+	    ResultSetMetaData metaData = result.getMetaData();
+	    StringBuilder output = new StringBuilder();
+	    ArrayList<String> items = new ArrayList<String>();
+	    ArrayList<String> tags = new ArrayList<String>();
+
+	    while (result.next()) {
+	        String title = result.getString(1);
+	        String location = result.getString(2);
+	        
+	        for (int i = 1; i < 5; i++) {
+	            if (result.getInt((i + 1) * 2) != 0) {
+	                items.add(String.format("%s，剩餘%d份", result.getString((i * 2) + 1), result.getInt((i + 1) * 2)));
+	            }
+	        } //數字為0時不顯示
+
+	        String note = result.getString(11);
+
+	        for (int i = 1; i < 6; i++) {
+	            tags.add(result.getString(i + 11) + " ");
+	        }
+
+	        String endTime = result.getString(18);
+
+	        output.append(String.format("%s\n%s．%s\n", title, endTime, location));
+
+	        for (String item : items) {
+	            output.append(String.format("%s\n", item));
+	        }
+
+	        output.append(String.format("備註：%s\n", note));
+
+	        output.append("#標籤：");
+	        for (String tag : tags) {
+	            output.append(tag);
+	        }
+	        output.append("\n").append("-".repeat(40)).append("\n");
+
+	        items.clear();
+	        tags.clear();
+	    }
+	    return output.toString();
 	}
 }
