@@ -150,8 +150,8 @@ public class EditPage extends JFrame{
 						sucess = stat.execute();
 						i++;
 					}else{
-						String query = "UPDATE `posts`SET itemQ1 = ?, itemQ2 = ?, itemQ3 = ?, itemQ4 = ?,"
-								+"WHERE title = ?";
+						String query = "UPDATE `posts` SET itemQ1 = ?, itemQ2 = ?, itemQ3 = ?, itemQ4 = ?"
+								+ "WHERE title = ?;";
 						PreparedStatement stat = conn.prepareStatement(query);
 					
 						stat.setString(1, itemQF1.getText());
