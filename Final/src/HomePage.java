@@ -49,8 +49,16 @@ public class HomePage extends JFrame{
 	
 	public void creatButton() {
 		updateButton = new JButton("更新頁面");
+		updateButton.setBackground(Color.PINK);
+		updateButton.setBorderPainted(false); 
+		
 		addPostButton = new JButton("新增貼文");
+		addPostButton.setBackground(Color.ORANGE);
+		addPostButton.setBorderPainted(false);
+		
 		searchButton = new JButton("搜尋");
+		searchButton.setBackground(new Color(162, 205, 90));
+		searchButton.setBorderPainted(false);
 		
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -83,7 +91,6 @@ public class HomePage extends JFrame{
 			sucess = stat.execute(query);
 			if(sucess) {
 				ResultSet result = stat.getResultSet();
-				System.out.println("check");
 				postsArea.repaint();
 				postsArea.setText(showResultSet(result));
 			}
@@ -95,7 +102,7 @@ public class HomePage extends JFrame{
 	}
 	
 	public void creatTextField() {
-		keyWordF = new JTextField(5);
+		keyWordF = new JTextField(8);
 	}
 	
 	public void creatTextArea() {
@@ -103,14 +110,13 @@ public class HomePage extends JFrame{
 	    postsArea.setText("");
 
 	    scrollPane = new JScrollPane(postsArea);
-	    scrollPane.setPreferredSize(new Dimension(650, 450)); // Adjust the preferred size of the scroll pane
+	    scrollPane.setPreferredSize(new Dimension(650, 450));
 
 	    Font font = new Font("Microsoft JhengHei", Font.PLAIN, 10);
 	    postsArea.setFont(font);
 
-	    // Adjust the font size without affecting the JTextArea's size
 	    Font currentFont = postsArea.getFont();
-	    Font newFont = currentFont.deriveFont(20f); // Set font size to 20
+	    Font newFont = currentFont.deriveFont(16f);
 	    postsArea.setFont(newFont);
 	}
 	
@@ -118,20 +124,26 @@ public class HomePage extends JFrame{
 	    buttonsP = new JPanel();
 	    buttonsP.add(updateButton);
 	    buttonsP.add(addPostButton);
+	    buttonsP.setOpaque(false);
 
 	    keyWordP = new JPanel();
 	    keyWordP.add(keyWordL);
 	    keyWordP.add(keyWordF);
 	    keyWordP.add(searchButton);
+	    keyWordP.setOpaque(false);
 
 	    postsP = new JPanel();
 	    postsP.add(scrollPane); 
+	    postsP.setOpaque(false);
 
-	    overallP = new JPanel();
+	    overallP = new JPanel(new FlowLayout());
 	    overallP.add(buttonsP);
 	    overallP.add(keyWordP);
 	    overallP.add(postsP);
+	    overallP.setOpaque(false);
+	    
 	    this.add(overallP);
+	    this.getContentPane().setBackground(new Color(255, 255, 240));
 	}
 	
 	public void keywordSearch() {
@@ -247,7 +259,7 @@ public class HomePage extends JFrame{
 	        for (String tag : tags) {
 	            output.append(tag);
 	        }
-	        output.append("\n").append("-".repeat(40)).append("\n");
+	        output.append("\n").append("-".repeat(80)).append("\n");
 
 	        items.clear();
 	        tags.clear();
