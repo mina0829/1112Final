@@ -1,5 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.event.*;
 import java.io.File;
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Calendar;
 
 public class EditPage extends JFrame{
 	private static final int FRAME_WIDTH = 800;
-	private static final int FRAME_HEIGHT = 600;
+	private static final int FRAME_HEIGHT = 420;
 	
 	private JPanel addItemP1, addItemP2, addItemP3, addItemP4, topP, tagP, centerP, bottomP, overallP, itemsP;
 	private JLabel titleL, locationL, addItemL, noteL, tagL, timeL, whiteL;
@@ -23,6 +24,7 @@ public class EditPage extends JFrame{
 	private JButton pictureBtn, updateBtn, deleteBtn;
 	
 	private String postTime;
+	private Border border;
 	private boolean sucess;
 	private int i = 0;
 	private ArrayList<Item>items;
@@ -109,11 +111,17 @@ public class EditPage extends JFrame{
 	}
 	
 	public void creatTextArea() {
+		border = BorderFactory.createLineBorder(Color.GRAY, 1);
 		noteArea = new JTextArea(2, 40);
+		noteArea.setBorder(border);
 	}
 	
 	public void creatButton() {
 		updateBtn = new JButton("更新編輯");
+		updateBtn.setForeground(Color.WHITE);
+		updateBtn.setBackground(new Color(70, 130, 180));
+		updateBtn.setBorderPainted(false); 
+		
 		updateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				//將現有資料上傳到資料庫
@@ -150,15 +158,19 @@ public class EditPage extends JFrame{
 						sucess = stat.execute();
 						i++;
 					}else{
-						String query = "UPDATE `posts` SET itemQ1 = ?, itemQ2 = ?, itemQ3 = ?, itemQ4 = ?"
+						String query = "UPDATE `posts` SET  itemName1 = ?, itemQ1 = ?, itemName2 = ?, itemQ2 = ?, itemName3 = ?, itemQ3 = ?, itemName4 = ?, itemQ4 = ?"
 								+ "WHERE title = ?;";
 						PreparedStatement stat = conn.prepareStatement(query);
 					
-						stat.setString(1, itemQF1.getText());
-						stat.setString(2, itemQF2.getText());
-						stat.setString(3, itemQF3.getText());
-						stat.setString(4, itemQF4.getText());
-						stat.setString(5, titleF.getText());
+						stat.setString(1, itemNameF1.getText());
+						stat.setString(2, itemQF1.getText());
+						stat.setString(3, itemNameF2.getText());
+						stat.setString(4, itemQF2.getText());
+						stat.setString(5, itemNameF3.getText());
+						stat.setString(6, itemQF3.getText());
+						stat.setString(7, itemNameF4.getText());
+						stat.setString(8, itemQF4.getText());
+						stat.setString(9, titleF.getText());
 					
 						sucess = stat.execute();
 					}
@@ -170,11 +182,14 @@ public class EditPage extends JFrame{
 		});
 		
 		deleteBtn = new JButton("刪除貼文");
+		deleteBtn.setForeground(Color.WHITE);
+		deleteBtn.setBackground(new Color(178, 34, 34));
+		deleteBtn.setBorderPainted(false);
+		
 		deleteBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//將這篇貼文的資料刪除
 				try {
-					String query = "DELETE FROM `posts` WHERE `title` = " + titleF.getText() + ";";
+					String query = "UPDATE `posts` SET state = '0' WHERE `title` = '" + titleF.getText() + "';";
 					sucess = stat.execute(query);
 				}catch(SQLException e) {
 					e.printStackTrace();
@@ -189,24 +204,28 @@ public class EditPage extends JFrame{
 		addItemP1.add(itemNameF1);
 		addItemP1.add(itemQL1);
 		addItemP1.add(itemQF1);
+		addItemP1.setOpaque(false);
 		
 		addItemP2 = new JPanel(new GridLayout(1, 4));
 		addItemP2.add(itemNameL2);
 		addItemP2.add(itemNameF2);
 		addItemP2.add(itemQL2);
 		addItemP2.add(itemQF2);
+		addItemP2.setOpaque(false);
 		
 		addItemP3 = new JPanel(new GridLayout(1, 4));
 		addItemP3.add(itemNameL3);
 		addItemP3.add(itemNameF3);
 		addItemP3.add(itemQL3);
 		addItemP3.add(itemQF3);
+		addItemP3.setOpaque(false);
 		
 		addItemP4 = new JPanel(new GridLayout(1, 4));
 		addItemP4.add(itemNameL4);
 		addItemP4.add(itemNameF4);
 		addItemP4.add(itemQL4);
 		addItemP4.add(itemQF4);
+		addItemP4.setOpaque(false);
 		
 		itemsP = new JPanel(new GridLayout(5, 1));
 		itemsP.add(addItemL);
@@ -214,6 +233,7 @@ public class EditPage extends JFrame{
 		itemsP.add(addItemP2);
 		itemsP.add(addItemP3);
 		itemsP.add(addItemP4);
+		itemsP.setOpaque(false);
 		
 		topP = new JPanel(new GridLayout(3, 2));
 		topP.add(titleL);
@@ -222,6 +242,7 @@ public class EditPage extends JFrame{
 		topP.add(locationF);
 		topP.add(timeL);
 		topP.add(timeF);
+		topP.setOpaque(false);
 		
 		tagP = new JPanel(new GridLayout(1, 5));
 		tagP.add(tagF1);
@@ -229,16 +250,19 @@ public class EditPage extends JFrame{
 		tagP.add(tagF3);
 		tagP.add(tagF4);
 		tagP.add(tagF5);
+		tagP.setOpaque(false);
 		
 		centerP = new JPanel(new GridLayout(4, 1));
 		centerP.add(noteL);
 		centerP.add(noteArea);
 		centerP.add(tagL);
 		centerP.add(tagP);
+		centerP.setOpaque(false);
 		
 		bottomP = new JPanel();
 		bottomP.add(updateBtn);
 		bottomP.add(deleteBtn);
+		bottomP.setOpaque(false);
 		
 		overallP = new JPanel();
 		overallP.add(topP);
@@ -246,6 +270,10 @@ public class EditPage extends JFrame{
 		overallP.add(centerP);
 		overallP.add(whiteL);
 		overallP.add(bottomP);
+		overallP.setOpaque(false);
+		
 		this.add(overallP);
+		this.getContentPane().setBackground(new Color(255, 255, 240));
 	}
 }
+
